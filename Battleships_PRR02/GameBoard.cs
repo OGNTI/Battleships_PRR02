@@ -1,4 +1,5 @@
 ﻿public class GameBoard
 {
-    public int[,] grid = new int[10, 10];
-}
+    public char[,] grid = {{'f',0,0,0,0,0,0,0,0,0}, {}};
+
+}   
