@@ -1,26 +1,9 @@
 ﻿
-GameBoard gameBoard = new GameBoard();
+GameBoard gameBoard1 = new GameBoard();
 
+gameBoard1.GenerateBoard();
+gameBoard1.DrawBoard();
 
-    foreach (char c in gameBoard.grid)
-    {
-        
-    }
-
-int a = 0;
-for (int y = 0; y < gameBoard.grid.GetLength(0); y++)
-{
-    Console.WriteLine();
-    for (int x = 0; x < gameBoard.grid.GetLength(1); x++)
-    {
-        Console.Write(gameBoard.grid[x, y] + " ");
-        a++;
-    }
-}
-
-
-Console.WriteLine();
-Console.WriteLine(a);
 
 
 
