@@ -4,6 +4,6 @@
     {
         name = "Destroyer";
         size = 3;
-        position = new int[size][,];
+        position = new int[size,2];
     }
 }

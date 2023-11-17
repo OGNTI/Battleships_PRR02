@@ -4,6 +4,6 @@
     {
         name = "Corvette";
         size = 2;
-        position = new int[size][,];
+        position = new int[size,2];
     }
 }
