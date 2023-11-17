@@ -1,0 +1,9 @@
+﻿public class Destroyer  : Ship
+{
+    public Destroyer()
+    {
+        name = "Destroyer";
+        size = 3;
+        position = new int[size][,];
+    }
+}
