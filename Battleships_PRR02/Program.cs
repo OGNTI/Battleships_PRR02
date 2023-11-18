@@ -6,6 +6,7 @@ while (true)
     gameBoard1.GenerateBoard();
     gameBoard1.DrawBoard();
 
+    Console.WriteLine();
     Console.ReadLine();
 }
 
