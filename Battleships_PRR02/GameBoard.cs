@@ -1,16 +1,40 @@
 ﻿public class GameBoard
 {
-    public int boardSize = 10;
+
+    int _boardSize = 10;
+
+    public int boardSize
+    {
+        get
+        {
+            return _boardSize;
+        }
+        set
+        {
+            _boardSize = value;
+
+            if (_boardSize < 5)
+            {
+                _boardSize = 5;
+            }
+            else if (_boardSize > alphabet.Length)
+            {
+                _boardSize = 26;
+            }
+        }
+    }
 
     char[,] grid;
     int[,] shipGrid;
 
     char hit = 'x';
     char miss = '¤';
+    char unknown = 'o';
+
+    List<Ship> ships = new List<Ship>();
 
     public char[] alphabet = Enumerable.Range('A', 'Z' - 'A' + 1).Select(i => (char)i).ToArray();
 
-    List<Ship> ships = new List<Ship>();
 
     public void GenerateBoard()
     {
@@ -22,11 +46,11 @@
     {
         grid = new char[boardSize, boardSize];
 
-        for (int y = 0; y < grid.GetLength(1); y++) //set each space in list to 'o'
+        for (int y = 0; y < grid.GetLength(1); y++) //set each space in list to unknown char
         {
             for (int x = 0; x < grid.GetLength(0); x++)
             {
-                grid[x, y] = 'o';
+                grid[x, y] = unknown;
             }
         }
     }
@@ -35,11 +59,18 @@
     {
         shipGrid = new int[boardSize, boardSize];
         ships.Clear();
-        ships.Add(new Battleship());
-        ships.Add(new Cruiser());
-        ships.Add(new Destroyer());
-        ships.Add(new Corvette());
-        ships.Add(new Corvette());
+
+        int f = (int)(boardSize/5);
+        if (boardSize >= 20)
+        {
+            f++;
+        }
+        
+        for (int i = 0; i < f; i++)
+        {
+            Fleet();
+        }
+
 
         foreach (Ship s in ships) 
         {
@@ -233,6 +264,11 @@
 
             for (int x = 0; x < grid.GetLength(0); x++)
             {
+                if (shipGrid[x,y] == 1) //see ships
+                {
+                    grid[x,y] = hit;
+                }
+                
                 if (grid[x,y] == hit)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -264,5 +300,14 @@
             Console.WriteLine("Miss");
             grid[targetCoords[0], targetCoords[1]] = miss;
         }
+    }
+
+    void Fleet()
+    {
+        ships.Add(new Battleship());
+        ships.Add(new Cruiser());
+        ships.Add(new Destroyer());
+        ships.Add(new Corvette());
+        ships.Add(new Corvette());
     }
 }

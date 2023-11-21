@@ -1,26 +1,43 @@
 ﻿using System.Text.RegularExpressions;
 
-GameBoard gameBoard1 = new GameBoard();
+List<Player> players = new();
 
-Console.WriteLine("How big of a board?");
-bool placeholder = int.TryParse(Console.ReadLine(), out int a);
-if (placeholder)
+bool singleplayer = true;
+
+Console.WriteLine("One player or two players?");
+string answer = Console.ReadLine().ToLower().Trim();
+if (answer == "2" || answer == "two") //make this actually do something next
 {
-    if (a >= 5)
-    {
-        gameBoard1.boardSize = a;
-    }
+    singleplayer = false;
+    players.Add(new Player());
+    players[0].SetPlayer();
+    players[0].designation = 1;
+
+    players.Add(new Player());
+    players[1].SetPlayer();
+    players[1].designation = 2;
+}
+else
+{
+    singleplayer = true;
+    players.Add(new Player());
+    players[0].SetPlayer();
 }
 
-gameBoard1.GenerateBoard();
+if (singleplayer)
+{
+    players[0].SetBoard();    
+}
 
 bool gaming = true;
 while (gaming)
 {
-    gameBoard1.DrawBoard();
+    foreach (Player p in players)
+    {
+        p.board.DrawBoard();
 
-    gameBoard1.CheckHit(GetTargetFromUserInput(gameBoard1));
-
+        p.board.CheckHit(GetTargetFromUserInput(p.board));     
+    }
 }
 
 int[] GetTargetFromUserInput(GameBoard board)
@@ -66,6 +83,11 @@ int[] GetTargetFromUserInput(GameBoard board)
                 Console.WriteLine("Your coordinates are out of range. \nTry again.");
             }
 
+        }
+
+        if (lettersOnly.Length > 1)
+        {
+            Console.WriteLine("Took the first letter as coordinate.");
         }
     }
 
