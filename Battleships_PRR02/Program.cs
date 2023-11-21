@@ -2,6 +2,16 @@
 
 GameBoard gameBoard1 = new GameBoard();
 
+Console.WriteLine("How big of a board?");
+bool placeholder = int.TryParse(Console.ReadLine(), out int a);
+if (placeholder)
+{
+    if (a >= 5)
+    {
+        gameBoard1.boardSize = a;
+    }
+}
+
 gameBoard1.GenerateBoard();
 
 bool gaming = true;
@@ -39,7 +49,7 @@ int[] GetTargetFromUserInput(GameBoard board)
         }
         else
         {
-            char.TryParse(lettersOnly.Substring(0,1).ToUpper(), out char xChar);
+            char.TryParse(lettersOnly.Substring(0, 1).ToUpper(), out char xChar);
             int.TryParse(numbersOnly, out int y);
 
             int x = Array.IndexOf(board.alphabet, xChar);
