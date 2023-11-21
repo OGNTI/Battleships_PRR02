@@ -206,6 +206,7 @@
 
     public void DrawBoard()
     {
+        Console.Clear();
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write("   ");
         for (int i = 0; i < grid.GetLength(1); i++)
@@ -246,8 +247,15 @@
         Console.WriteLine();
     }
 
-    public void CheckHit(int[,] targetCoords)
+    public void CheckHit(int[] targetCoords)
     {
-
+        if (shipGrid[targetCoords[0], targetCoords[1]] == 1)
+        {
+            Console.WriteLine("Hit");
+        }
+        else
+        {
+            Console.WriteLine("Miss");
+        }
     }
 }
