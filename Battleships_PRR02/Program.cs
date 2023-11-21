@@ -10,6 +10,7 @@ while (gaming)
     gameBoard1.DrawBoard();
 
     gameBoard1.CheckHit(GetTargetFromUserInput(gameBoard1));
+
 }
 
 int[] GetTargetFromUserInput(GameBoard board)
@@ -19,6 +20,7 @@ int[] GetTargetFromUserInput(GameBoard board)
     while (acceptedInput == false)
     {
         string userInput = Console.ReadLine().ToLower().Trim();
+        Console.WriteLine();
 
         string lettersOnly = Regex.Replace(userInput, "[^a-z.]", "");
         string numbersOnly = Regex.Replace(userInput, "[^0-9.]", "");

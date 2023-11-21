@@ -5,6 +5,9 @@
     char[,] grid;
     int[,] shipGrid;
 
+    char hit = 'x';
+    char miss = '¤';
+
     public char[] alphabet = Enumerable.Range('A', 'Z' - 'A' + 1).Select(i => (char)i).ToArray();
 
     List<Ship> ships = new List<Ship>();
@@ -206,7 +209,6 @@
 
     public void DrawBoard()
     {
-        Console.Clear();
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write("   ");
         for (int i = 0; i < grid.GetLength(1); i++)
@@ -231,10 +233,13 @@
 
             for (int x = 0; x < grid.GetLength(0); x++)
             {
-                if (shipGrid[x,y] == 1)
+                if (grid[x,y] == hit)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    grid[x, y] = 'x';
+                }
+                else if (grid[x,y] == miss)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                 }
                 else
                 {
@@ -252,10 +257,12 @@
         if (shipGrid[targetCoords[0], targetCoords[1]] == 1)
         {
             Console.WriteLine("Hit");
+            grid[targetCoords[0], targetCoords[1]] = hit;
         }
         else
         {
             Console.WriteLine("Miss");
+            grid[targetCoords[0], targetCoords[1]] = miss;
         }
     }
 }
