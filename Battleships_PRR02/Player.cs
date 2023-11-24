@@ -25,6 +25,7 @@
         }
 
 
-        board.GenerateBoard();
+        board.GenerateGrid();
+        board.GenerateShips();
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.Text.RegularExpressions;
-
-List<Player> players = new();
+﻿Player player1 = new();
+Player player2 = new();
 
 bool singleplayer = true;
 
@@ -9,91 +8,60 @@ string answer = Console.ReadLine().ToLower().Trim();
 if (answer == "2" || answer == "two") //make this actually do something next
 {
     singleplayer = false;
-    players.Add(new Player());
-    players[0].SetPlayer();
-    players[0].designation = 1;
+    player1.designation = 1;
 
-    players.Add(new Player());
-    players[1].SetPlayer();
-    players[1].designation = 2;
+    player2.designation = 2;
+
+
+    player1.SetPlayer();
+    player1.board.GenerateGrid();
+    player2.SetPlayer();
+    player2.board.GenerateGrid();
+
+    for (int i = 0; i < 5; i++)
+    {
+        Console.Clear();
+        player1.board.DrawBoard(true);
+        player1.board.PlaceShip();
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        Console.Clear();
+        player2.board.DrawBoard(true);
+        player2.board.PlaceShip();
+    }
 }
 else
 {
     singleplayer = true;
-    players.Add(new Player());
-    players[0].SetPlayer();
+    player1.SetPlayer();
+    player1.SetBoard();
 }
 
-if (singleplayer)
-{
-    players[0].SetBoard();    
-}
+Console.Clear();
 
 bool gaming = true;
 while (gaming)
 {
-    foreach (Player p in players)
-    {
-        p.board.DrawBoard();
 
-        p.board.CheckHit(GetTargetFromUserInput(p.board));     
+    if (singleplayer)
+    {
+        player1.board.DrawBoard(false);
+
+        player1.board.FireAndCheckHit();
+    }
+    else
+    {
+        Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship.");
+        player2.board.DrawBoard(false);
+
+        player2.board.FireAndCheckHit();
+
+
+        Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship.");
+        player1.board.DrawBoard(false);
+
+        player1.board.FireAndCheckHit();
     }
 }
-
-int[] GetTargetFromUserInput(GameBoard board)
-{
-    int[] coordinates = new int[2];
-    bool acceptedInput = false;
-    while (acceptedInput == false)
-    {
-        string userInput = Console.ReadLine().ToLower().Trim();
-        Console.WriteLine();
-
-        string lettersOnly = Regex.Replace(userInput, "[^a-z.]", "");
-        string numbersOnly = Regex.Replace(userInput, "[^0-9.]", "");
-
-        if (lettersOnly.Length <= 0 && numbersOnly.Length <= 0)
-        {
-            Console.WriteLine("You did not type coordinates. \nTry again.");
-        }
-        else if (lettersOnly.Length <= 0)
-        {
-            Console.WriteLine("You did not type a letter coordinate. \nTry again.");
-        }
-        else if (numbersOnly.Length <= 0)
-        {
-            Console.WriteLine("You did not type a number coordinate. \nTry again.");
-        }
-        else
-        {
-            char.TryParse(lettersOnly.Substring(0, 1).ToUpper(), out char xChar);
-            int.TryParse(numbersOnly, out int y);
-
-            int x = Array.IndexOf(board.alphabet, xChar);
-            y -= 1;
-
-            if (x < board.boardSize && y < board.boardSize)
-            {
-                coordinates[0] = x;
-                coordinates[1] = y;
-                acceptedInput = true;
-            }
-            else
-            {
-                Console.WriteLine("Your coordinates are out of range. \nTry again.");
-            }
-
-        }
-
-        if (lettersOnly.Length > 1)
-        {
-            Console.WriteLine("Took the first letter as coordinate.");
-        }
-    }
-
-    return coordinates;
-}
-
-
-
 
