@@ -28,4 +28,20 @@
         board.GenerateGrid();
         board.GenerateShips();
     }
+
+    public int[] GetTarget()
+    {
+        int[] target = new int[2];
+        bool acceptedCoordinates = false;
+        while (acceptedCoordinates == false)
+        {
+            string possibleCoordinates = Console.ReadLine().ToLower().Trim();
+
+            var result = board.GetTargetOrBoolFromUserInput(possibleCoordinates);
+            target = result.target; 
+            acceptedCoordinates = result.accepted;
+        }
+
+        return target;
+    }
 }

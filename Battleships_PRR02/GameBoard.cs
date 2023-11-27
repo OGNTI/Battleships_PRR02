@@ -75,39 +75,24 @@ public class GameBoard
 
         foreach (Ship s in ships)
         {
-            bool acceptedPositioning = false;
-            while (acceptedPositioning == false)
+            bool acceptedPlacement = false;
+            while (acceptedPlacement == false)
             {
-                bool acceptedStartPosition = false;
-                while (acceptedStartPosition == false)
-                {
-                    //first get random starting point
-                    s.position[0, 0] = Random.Shared.Next(boardSize);
-                    s.position[0, 1] = Random.Shared.Next(boardSize);
+                //first get random starting point
+                int[] startPosition = new int[2];
+                startPosition[0] = Random.Shared.Next(boardSize);
+                startPosition[1] = Random.Shared.Next(boardSize);
 
-                    if (shipGrid[s.position[0, 0], s.position[0, 1]] == 0) //if starting position not occupied
-                    {
-                        shipGrid[s.position[0, 0], s.position[0, 1]] = 1; //make occupied
-                        acceptedStartPosition = true;
-                    }
-                }
-                
-                bool placeHolder = false;
-                while (placeHolder)
-                {
-                    int dir = Random.Shared.Next(4);
-                    placeHolder = CheckShipPositioning(s, dir);
-                }
+                int dir = Random.Shared.Next(4);
+
+                acceptedPlacement = CheckShipPositioning(s, startPosition, dir);
             }
 
-            for (int i = 0; i < s.size; i++)
-            {
-                shipGrid[s.position[i, 0], s.position[i, 1]] = 1;
-            }
+            SetShipPositions(s);
         }
     }
 
-    public void DrawBoard(bool placing)
+    public void DrawBoard(bool isPlacing)
     {
         Console.ForegroundColor = coorindateColour;
         Console.Write("   ");
@@ -133,7 +118,7 @@ public class GameBoard
 
             for (int x = 0; x < grid.GetLength(0); x++)
             {
-                if (placing)
+                if (isPlacing)
                 {
                     if (shipGrid[x, y] == 1) //see ships during placement
                     {
@@ -183,8 +168,17 @@ public class GameBoard
         ships.Add(new Corvette());
     }
 
-    bool CheckShipPositioning(Ship s, int dir)
+    bool CheckShipPositioning(Ship s, int[] placementTarget, int dir)
     {
+        s.position[0, 0] = placementTarget[0];
+        s.position[0, 1] = placementTarget[1];
+
+        if (shipGrid[s.position[0, 0], s.position[0, 1]] == 1) //if starting position occupied
+        {
+            Console.WriteLine("Occupied \nTry again.");
+            return false;
+        }
+
         bool acceptedPositioning = false;
         bool blockedLeft = false;
         bool blockedUp = false;
@@ -292,11 +286,13 @@ public class GameBoard
                 }
             }
         }
+
+        if (!acceptedPositioning) Console.WriteLine("Blocked. \nTry again.");
         
         return acceptedPositioning;
     }
 
-    public void PlaceShip()
+    public void PlaceShip(Player player)
     {
         int a = ships.Count();
         if (a == 0)
@@ -316,103 +312,48 @@ public class GameBoard
             ships.Add(new Corvette());
         }
 
-        Console.WriteLine($"Type starting coordinate followed by direction for ship to be placed in. [e.g A1 Right, B5 Down, K9 Up] \nCurrently placing {ships[a].size} spaces long ship.");
+        Console.WriteLine($"{player.name} \nType starting coordinate followed by direction for ship to be placed in. [e.g A1 Right, B5 Down, K9 Up] \nCurrently placing {ships[a].size} spaces long ship.");
 
-        int dir = 0;
-        bool acceptedPositioning = false;
-        while (acceptedPositioning == false)
+        bool acceptedPlacement = false;
+        while (acceptedPlacement == false)
         {
-            string userInput = Console.ReadLine().ToLower().Trim();
-
-            int to = userInput.IndexOf(" ");
-            string possibleCoordinates = userInput.Substring(0, to);
-            string possibleDirection = userInput.Substring(to, userInput.Length - to);
-
-            var result = GetTargetOrBoolFromUserInput(possibleCoordinates);
-            int[] placementTarget = result.Item1;
-            bool acceptedCoordinates = result.Item2; // make accepted bool for coordinate and direction ---------------------------------------------------------------------------------------------------
-
-
-            ships[a].position[0, 0] = placementTarget[0];
-            ships[a].position[0, 1] = placementTarget[1];
-
-            if (shipGrid[ships[a].position[0, 0], ships[a].position[0, 1]] == 0) //if starting position not occupied
+            int[] placementTarget = new int[2];
+            int dir = 0;
+            bool acceptedInput = false;
+            while (acceptedInput == false)
             {
-                shipGrid[ships[a].position[0, 0], ships[a].position[0, 1]] = 1; //make occupied
-                acceptedPositioning = true;
+                bool acceptedDirection = false;
+
+                string userInput = Console.ReadLine().ToLower().Trim();
+
+                int to = userInput.IndexOf(" ");
+                string possibleCoordinates = userInput.Substring(0, to);
+                string possibleDirection = userInput.Substring(to, userInput.Length - to).Trim();
+
+                var result = GetTargetOrBoolFromUserInput(possibleCoordinates);
+                placementTarget = result.target; // Get coordinates
+
+                if (possibleDirection == "left") {dir = 0; acceptedDirection = true;}
+                else if (possibleDirection == "up") {dir = 1; acceptedDirection = true;}
+                else if (possibleDirection == "right") {dir = 2; acceptedDirection = true;}
+                else if (possibleDirection == "down") {dir = 3; acceptedDirection = true;}
+                else Console.WriteLine("You did not type an accepted direction. \nTry again.");
+
+                if (result.accepted && acceptedDirection)
+                {
+                    acceptedInput = true;
+                }
             }
-            else Console.WriteLine("Occupied \nTry again.");
 
-            if (possibleDirection == "left") dir = 0;
-            else if (possibleDirection == "up") dir = 1;
-            else if (possibleDirection == "right") dir = 2;
-            else if (possibleDirection == "down") dir = 3;
-            else Console.WriteLine("You did not type an accepted direction. \nTry again.");
-        }
-
-        bool acceptedPlacement = CheckShipPositioning(ships[a], dir);
-        if (!acceptedPlacement)
-        {
-            Console.WriteLine("");
-        }
-        else 
-        {
-
+            acceptedPlacement = CheckShipPositioning(ships[a], placementTarget, dir);
+            if (acceptedPlacement)
+            {
+                SetShipPositions(ships[a]);
+            }
         }
     }
 
-    public int[] GetTargetFromUserInput(string userInput)
-    {
-        int[] coordinates = new int[2];
-
-        // string userInput = Console.ReadLine().ToLower().Trim();
-        // Console.WriteLine();
-
-        string lettersOnly = Regex.Replace(userInput, "[^a-z.]", "");
-        string numbersOnly = Regex.Replace(userInput, "[^0-9.]", "");
-
-        if (lettersOnly.Length <= 0 && numbersOnly.Length <= 0)
-        {
-            Console.WriteLine("You did not type coordinates. \nTry again.");
-        }
-        else if (lettersOnly.Length <= 0)
-        {
-            Console.WriteLine("You did not type a letter coordinate. \nTry again.");
-        }
-        else if (numbersOnly.Length <= 0)
-        {
-            Console.WriteLine("You did not type a number coordinate. \nTry again.");
-        }
-        else
-        {
-            char.TryParse(lettersOnly.Substring(0, 1).ToUpper(), out char xChar);
-            int.TryParse(numbersOnly, out int y);
-
-            int x = Array.IndexOf(alphabet, xChar);
-            y -= 1;
-
-            if (x < boardSize && y < boardSize)
-            {
-                coordinates[0] = x;
-                coordinates[1] = y;
-            }
-            else
-            {
-                Console.WriteLine("Your coordinates are out of range. \nTry again.");
-            }
-
-        }
-
-        if (lettersOnly.Length > 1)
-        {
-            Console.WriteLine("Took the first letter as coordinate.");
-        }
-        
-
-        return coordinates;
-    }
-
-    public Tuple<int[], bool> GetTargetOrBoolFromUserInput(string userInput)
+    public (int[] target, bool accepted) GetTargetOrBoolFromUserInput(string userInput)
     {
         int[] coordinates = new int[2];
         bool acceptedInput = false;
@@ -458,7 +399,7 @@ public class GameBoard
             Console.WriteLine("Took the first letter as coordinate.");
         }
 
-        var result = Tuple.Create(coordinates, acceptedInput);
+        var result = (coordinates, acceptedInput);
         return result;
     }
 

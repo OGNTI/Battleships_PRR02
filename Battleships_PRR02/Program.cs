@@ -20,13 +20,13 @@ if (answer == "2" || answer == "two") //make this actually do something next
     {
         Console.Clear();
         player1.board.DrawBoard(true);
-        player1.board.PlaceShip();
+        player1.board.PlaceShip(player1);
     }
     for (int i = 0; i < 5; i++)
     {
         Console.Clear();
         player2.board.DrawBoard(true);
-        player2.board.PlaceShip();
+        player2.board.PlaceShip(player2);
     }
 }
 else
@@ -46,20 +46,29 @@ while (gaming)
     {
         player1.board.DrawBoard(false);
 
-        player1.board.FireAndCheckHit(player1.board.GetTargetFromUserInput());
+        int[] target = new int[2];
+        bool acceptedCoordinates = false;
+        while (acceptedCoordinates == false)
+        {
+            string possibleCoordinates = Console.ReadLine().ToLower().Trim();
+
+            var result = player1.board.GetTargetOrBoolFromUserInput(possibleCoordinates);
+            target = result.target; 
+            acceptedCoordinates = result.accepted;
+        }
+
+        player1.board.FireAndCheckHit(target);
     }
     else
     {
         Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship.");
         player2.board.DrawBoard(false);
-
-        player2.board.FireAndCheckHit(player2.board.GetTargetFromUserInput());
+        player2.board.FireAndCheckHit(player1.GetTarget());
 
 
         Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship.");
         player1.board.DrawBoard(false);
-
-        player1.board.FireAndCheckHit(player1.board.GetTargetFromUserInput());
+        player1.board.FireAndCheckHit(player2.GetTarget());
     }
 }
 
