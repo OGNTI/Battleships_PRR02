@@ -9,9 +9,7 @@ if (answer == "2" || answer == "two") //make this actually do something next
 {
     singleplayer = false;
     player1.designation = 1;
-
     player2.designation = 2;
-
 
     player1.SetPlayer();
     player1.board.GenerateGrid();
@@ -48,20 +46,20 @@ while (gaming)
     {
         player1.board.DrawBoard(false);
 
-        player1.board.FireAndCheckHit();
+        player1.board.FireAndCheckHit(player1.board.GetTargetFromUserInput());
     }
     else
     {
         Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship.");
         player2.board.DrawBoard(false);
 
-        player2.board.FireAndCheckHit();
+        player2.board.FireAndCheckHit(player2.board.GetTargetFromUserInput());
 
 
         Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship.");
         player1.board.DrawBoard(false);
 
-        player1.board.FireAndCheckHit();
+        player1.board.FireAndCheckHit(player1.board.GetTargetFromUserInput());
     }
 }
 

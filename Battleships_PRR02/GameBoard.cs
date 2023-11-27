@@ -4,7 +4,6 @@ public class GameBoard
 {
 
     int _boardSize = 10;
-
     public int boardSize
     {
         get
@@ -29,9 +28,17 @@ public class GameBoard
     char[,] grid;
     int[,] shipGrid;
 
+    ConsoleColor standardColour = ConsoleColor.Gray;
+    ConsoleColor coorindateColour = ConsoleColor.White;
+
     char hit = 'x';
+    ConsoleColor hitColour = ConsoleColor.DarkGray;
+
     char miss = '¤';
+    ConsoleColor missColour = ConsoleColor.Red;
+
     char unknown = 'o';
+    ConsoleColor unknownColour = ConsoleColor.Blue;
 
     List<Ship> ships = new List<Ship>();
 
@@ -84,8 +91,13 @@ public class GameBoard
                         acceptedStartPosition = true;
                     }
                 }
-
-                CheckAndSetShipPositions(s);
+                
+                bool placeHolder = false;
+                while (placeHolder)
+                {
+                    int dir = Random.Shared.Next(4);
+                    placeHolder = CheckShipPositioning(s, dir);
+                }
             }
 
             for (int i = 0; i < s.size; i++)
@@ -97,7 +109,7 @@ public class GameBoard
 
     public void DrawBoard(bool placing)
     {
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.ForegroundColor = coorindateColour;
         Console.Write("   ");
         for (int i = 0; i < grid.GetLength(1); i++)
         {
@@ -116,7 +128,7 @@ public class GameBoard
             {
                 Console.Write("\n");
             }
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = coorindateColour;
             Console.Write($"{nums} ");
 
             for (int x = 0; x < grid.GetLength(0); x++)
@@ -131,19 +143,19 @@ public class GameBoard
 
                 if (grid[x, y] == hit)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = hitColour;
                 }
                 else if (grid[x, y] == miss)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = missColour;
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = unknownColour;
                 }
                 Console.Write(grid[x, y] + " ");
             }
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = standardColour;
         }
         Console.WriteLine();
     }
@@ -171,7 +183,7 @@ public class GameBoard
         ships.Add(new Corvette());
     }
 
-    bool CheckAndSetShipPositions(Ship s)
+    bool CheckShipPositioning(Ship s, int dir)
     {
         bool acceptedPositioning = false;
         bool blockedLeft = false;
@@ -196,122 +208,91 @@ public class GameBoard
             blockedDown = true;
         }
 
-        bool acceptedExtensionPositions = false;
-        bool noSpaceForExtension = false;
-        while (acceptedExtensionPositions == false && noSpaceForExtension == false)
+        if (dir == 0)
         {
-            int dir = Random.Shared.Next(4); //randomize one direction to check
-            if (dir == 0)
+            if (!blockedLeft)
             {
+                for (int i = 1; i < s.size; i++) //check rest of ship positions
+                {
+                    s.position[i, 0] = s.position[0, 0] - i;
+                    s.position[i, 1] = s.position[0, 1];
+
+                    if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1) //if one is occupied
+                    {
+                        blockedLeft = true;
+                    }
+                }
+
                 if (!blockedLeft)
                 {
-                    for (int i = 1; i < s.size; i++) //set rest of ship positions
-                    {
-                        s.position[i, 0] = s.position[0, 0] - i;
-                        s.position[i, 1] = s.position[0, 1];
-
-                        if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1) //if one is occupied
-                        {
-                            for (int j = 0; j < i; j++) //make the previously placed positions not occupied again
-                            {
-                                shipGrid[s.position[i - 1, 0], s.position[i - 1, 1]] = 0;
-                            }
-                            blockedLeft = true;
-                        }
-                    }
-
-                    if (!blockedLeft)
-                    {
-                        acceptedExtensionPositions = true;
-                        acceptedPositioning = true;
-                    }
+                    acceptedPositioning = true;
                 }
-            }
-            else if (dir == 1)
-            {
-                if (!blockedUp)
-                {
-                    for (int i = 1; i < s.size; i++)
-                    {
-                        s.position[i, 0] = s.position[0, 0];
-                        s.position[i, 1] = s.position[0, 1] - i;
-
-                        if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1)
-                        {
-                            for (int j = 0; j < i; j++)
-                            {
-                                shipGrid[s.position[i - 1, 0], s.position[i - 1, 1]] = 0;
-                            }
-                            blockedUp = true;
-                        }
-                    }
-
-                    if (!blockedUp)
-                    {
-                        acceptedExtensionPositions = true;
-                        acceptedPositioning = true;
-                    }
-                }
-            }
-            else if (dir == 2)
-            {
-                if (!blockedRight)
-                {
-                    for (int i = 1; i < s.size; i++)
-                    {
-                        s.position[i, 0] = s.position[0, 0] + i;
-                        s.position[i, 1] = s.position[0, 1];
-
-                        if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1)
-                        {
-                            for (int j = 0; j < i; j++)
-                            {
-                                shipGrid[s.position[i - 1, 0], s.position[i - 1, 1]] = 0;
-                            }
-                            blockedRight = true;
-                        }
-                    }
-
-                    if (!blockedRight)
-                    {
-                        acceptedExtensionPositions = true;
-                        acceptedPositioning = true;
-                    }
-                }
-            }
-            else if (dir == 3)
-            {
-                if (!blockedDown)
-                {
-                    for (int i = 1; i < s.size; i++)
-                    {
-                        s.position[i, 0] = s.position[0, 0];
-                        s.position[i, 1] = s.position[0, 1] + i;
-
-                        if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1)
-                        {
-                            for (int j = 0; j < i; j++)
-                            {
-                                shipGrid[s.position[i - 1, 0], s.position[i - 1, 1]] = 0;
-                            }
-                            blockedDown = true;
-                        }
-                    }
-
-                    if (!blockedDown)
-                    {
-                        acceptedExtensionPositions = true;
-                        acceptedPositioning = true;
-                    }
-                }
-            }
-
-            if (blockedLeft && blockedUp && blockedRight && blockedDown)
-            {
-                noSpaceForExtension = true;
             }
         }
+        else if (dir == 1)
+        {
+            if (!blockedUp)
+            {
+                for (int i = 1; i < s.size; i++)
+                {
+                    s.position[i, 0] = s.position[0, 0];
+                    s.position[i, 1] = s.position[0, 1] - i;
 
+                    if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1)
+                    {
+                        blockedUp = true;
+                    }
+                }
+
+                if (!blockedUp)
+                {
+                    acceptedPositioning = true;
+                }
+            }
+        }
+        else if (dir == 2)
+        {
+            if (!blockedRight)
+            {
+                for (int i = 1; i < s.size; i++)
+                {
+                    s.position[i, 0] = s.position[0, 0] + i;
+                    s.position[i, 1] = s.position[0, 1];
+
+                    if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1)
+                    {
+                        blockedRight = true;
+                    }
+                }
+
+                if (!blockedRight)
+                {
+                    acceptedPositioning = true;
+                }
+            }
+        }
+        else if (dir == 3)
+        {
+            if (!blockedDown)
+            {
+                for (int i = 1; i < s.size; i++)
+                {
+                    s.position[i, 0] = s.position[0, 0];
+                    s.position[i, 1] = s.position[0, 1] + i;
+
+                    if (shipGrid[s.position[i, 0], s.position[i, 1]] == 1)
+                    {
+                        blockedDown = true;
+                    }
+                }
+
+                if (!blockedDown)
+                {
+                    acceptedPositioning = true;
+                }
+            }
+        }
+        
         return acceptedPositioning;
     }
 
@@ -335,13 +316,22 @@ public class GameBoard
             ships.Add(new Corvette());
         }
 
+        Console.WriteLine($"Type starting coordinate followed by direction for ship to be placed in. [e.g A1 Right, B5 Down, K9 Up] \nCurrently placing {ships[a].size} spaces long ship.");
 
+        int dir = 0;
         bool acceptedPositioning = false;
         while (acceptedPositioning == false)
         {
-            int[] placementTarget = new int[2];
+            string userInput = Console.ReadLine().ToLower().Trim();
 
-            placementTarget = GetTargetFromUserInput();
+            int to = userInput.IndexOf(" ");
+            string possibleCoordinates = userInput.Substring(0, to);
+            string possibleDirection = userInput.Substring(to, userInput.Length - to);
+
+            var result = GetTargetOrBoolFromUserInput(possibleCoordinates);
+            int[] placementTarget = result.Item1;
+            bool acceptedCoordinates = result.Item2; // make accepted bool for coordinate and direction ---------------------------------------------------------------------------------------------------
+
 
             ships[a].position[0, 0] = placementTarget[0];
             ships[a].position[0, 1] = placementTarget[1];
@@ -351,71 +341,132 @@ public class GameBoard
                 shipGrid[ships[a].position[0, 0], ships[a].position[0, 1]] = 1; //make occupied
                 acceptedPositioning = true;
             }
-            else
-            {
-                Console.WriteLine("Occupied \nTry again.");
-            }
+            else Console.WriteLine("Occupied \nTry again.");
+
+            if (possibleDirection == "left") dir = 0;
+            else if (possibleDirection == "up") dir = 1;
+            else if (possibleDirection == "right") dir = 2;
+            else if (possibleDirection == "down") dir = 3;
+            else Console.WriteLine("You did not type an accepted direction. \nTry again.");
         }
 
-        CheckAndSetShipPositions(ships[a]);
-
-        for (int i = 0; i < ships[a].size; i++)
+        bool acceptedPlacement = CheckShipPositioning(ships[a], dir);
+        if (!acceptedPlacement)
         {
-            shipGrid[ships[a].position[i, 0], ships[a].position[i, 1]] = 1;
+            Console.WriteLine("");
+        }
+        else 
+        {
+
         }
     }
 
-    int[] GetTargetFromUserInput()
+    public int[] GetTargetFromUserInput(string userInput)
     {
         int[] coordinates = new int[2];
-        bool acceptedInput = false;
-        while (acceptedInput == false)
+
+        // string userInput = Console.ReadLine().ToLower().Trim();
+        // Console.WriteLine();
+
+        string lettersOnly = Regex.Replace(userInput, "[^a-z.]", "");
+        string numbersOnly = Regex.Replace(userInput, "[^0-9.]", "");
+
+        if (lettersOnly.Length <= 0 && numbersOnly.Length <= 0)
         {
-            string userInput = Console.ReadLine().ToLower().Trim();
-            Console.WriteLine();
+            Console.WriteLine("You did not type coordinates. \nTry again.");
+        }
+        else if (lettersOnly.Length <= 0)
+        {
+            Console.WriteLine("You did not type a letter coordinate. \nTry again.");
+        }
+        else if (numbersOnly.Length <= 0)
+        {
+            Console.WriteLine("You did not type a number coordinate. \nTry again.");
+        }
+        else
+        {
+            char.TryParse(lettersOnly.Substring(0, 1).ToUpper(), out char xChar);
+            int.TryParse(numbersOnly, out int y);
 
-            string lettersOnly = Regex.Replace(userInput, "[^a-z.]", "");
-            string numbersOnly = Regex.Replace(userInput, "[^0-9.]", "");
+            int x = Array.IndexOf(alphabet, xChar);
+            y -= 1;
 
-            if (lettersOnly.Length <= 0 && numbersOnly.Length <= 0)
+            if (x < boardSize && y < boardSize)
             {
-                Console.WriteLine("You did not type coordinates. \nTry again.");
-            }
-            else if (lettersOnly.Length <= 0)
-            {
-                Console.WriteLine("You did not type a letter coordinate. \nTry again.");
-            }
-            else if (numbersOnly.Length <= 0)
-            {
-                Console.WriteLine("You did not type a number coordinate. \nTry again.");
+                coordinates[0] = x;
+                coordinates[1] = y;
             }
             else
             {
-                char.TryParse(lettersOnly.Substring(0, 1).ToUpper(), out char xChar);
-                int.TryParse(numbersOnly, out int y);
-
-                int x = Array.IndexOf(alphabet, xChar);
-                y -= 1;
-
-                if (x < boardSize && y < boardSize)
-                {
-                    coordinates[0] = x;
-                    coordinates[1] = y;
-                    acceptedInput = true;
-                }
-                else
-                {
-                    Console.WriteLine("Your coordinates are out of range. \nTry again.");
-                }
-
+                Console.WriteLine("Your coordinates are out of range. \nTry again.");
             }
 
-            if (lettersOnly.Length > 1)
-            {
-                Console.WriteLine("Took the first letter as coordinate.");
-            }
         }
 
+        if (lettersOnly.Length > 1)
+        {
+            Console.WriteLine("Took the first letter as coordinate.");
+        }
+        
+
         return coordinates;
+    }
+
+    public Tuple<int[], bool> GetTargetOrBoolFromUserInput(string userInput)
+    {
+        int[] coordinates = new int[2];
+        bool acceptedInput = false;
+
+        string lettersOnly = Regex.Replace(userInput, "[^a-z.]", "");
+        string numbersOnly = Regex.Replace(userInput, "[^0-9.]", "");
+
+        if (lettersOnly.Length <= 0 && numbersOnly.Length <= 0)
+        {
+            Console.WriteLine("You did not type coordinates. \nTry again.");
+        }
+        else if (lettersOnly.Length <= 0)
+        {
+            Console.WriteLine("You did not type a letter coordinate. \nTry again.");
+        }
+        else if (numbersOnly.Length <= 0)
+        {
+            Console.WriteLine("You did not type a number coordinate. \nTry again.");
+        }
+        else
+        {
+            char.TryParse(lettersOnly.Substring(0, 1).ToUpper(), out char xChar);
+            int.TryParse(numbersOnly, out int y);
+
+            int x = Array.IndexOf(alphabet, xChar);
+            y -= 1;
+
+            if (x < boardSize && y < boardSize)
+            {
+                coordinates[0] = x;
+                coordinates[1] = y;
+                acceptedInput = true;
+            }
+            else
+            {
+                Console.WriteLine("Your coordinates are out of range. \nTry again.");
+            }
+
+        }
+
+        if (lettersOnly.Length > 1)
+        {
+            Console.WriteLine("Took the first letter as coordinate.");
+        }
+
+        var result = Tuple.Create(coordinates, acceptedInput);
+        return result;
+    }
+
+    void SetShipPositions(Ship s)
+    {
+        for (int i = 0; i < s.size; i++)
+        {
+            shipGrid[s.position[i, 0], s.position[i, 1]] = 1;
+        }
     }
 }
