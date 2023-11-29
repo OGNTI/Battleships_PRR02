@@ -43,7 +43,6 @@ public class GameBoard
 
     public char[] alphabet = Enumerable.Range('A', 'Z' - 'A' + 1).Select(i => (char)i).ToArray();
 
-    // public List<string> gridCoordinates = new List<string>();
 
     public void GenerateGrid()
     {
@@ -419,17 +418,4 @@ public class GameBoard
             shipGrid[s.position[i, 0], s.position[i, 1]] = 1;
         }
     }
-
-    // void SetCoordinates()
-    // {
-    //     for (int y = 0; y < grid.GetLength(1); y++) //set each space in list to unknown char
-    //     {
-    //         for (int x = 0; x < grid.GetLength(0); x++)
-    //         {
-    //             string coordinate = alphabet[x].ToString() + (y + 1);
-    //             gridCoordinates.Add(coordinate);
-                
-    //         }
-    //     }
-    // }
 }
