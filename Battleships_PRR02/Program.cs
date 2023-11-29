@@ -19,12 +19,14 @@ if (answer == "2" || answer == "two") //make this actually do something next
     for (int i = 0; i < 5; i++)
     {
         Console.Clear();
+        Console.WriteLine("Ship Placement:");
         player1.board.DrawBoard(true);
         player1.board.PlaceShip(player1);
     }
     for (int i = 0; i < 5; i++)
     {
         Console.Clear();
+        Console.WriteLine("Ship Placement:");
         player2.board.DrawBoard(true);
         player2.board.PlaceShip(player2);
     }
@@ -46,18 +48,7 @@ while (gaming)
     {
         player1.board.DrawBoard(false);
 
-        int[] target = new int[2];
-        bool acceptedCoordinates = false;
-        while (acceptedCoordinates == false)
-        {
-            string possibleCoordinates = Console.ReadLine().ToLower().Trim();
-
-            var result = player1.board.GetTargetOrBoolFromUserInput(possibleCoordinates);
-            target = result.target; 
-            acceptedCoordinates = result.accepted;
-        }
-
-        player1.board.FireAndCheckHit(target);
+        player1.board.FireAndCheckHit(player1.GetTarget());
     }
     else
     {

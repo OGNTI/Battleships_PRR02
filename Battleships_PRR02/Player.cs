@@ -8,7 +8,7 @@
     public void SetPlayer()
     {
         Console.WriteLine($"Player{designation}, What is your name?");
-        name = Console.ReadLine().Trim(); 
+        name = Console.ReadLine().Trim();
         if (name == "")
         {
             name = "fucker" + designation;
@@ -37,8 +37,8 @@
         {
             string possibleCoordinates = Console.ReadLine().ToLower().Trim();
 
-            var result = board.GetTargetOrBoolFromUserInput(possibleCoordinates);
-            target = result.target; 
+            var result = board.GetTargetFromUserInput(possibleCoordinates);
+            target = result.target;
             acceptedCoordinates = result.accepted;
         }
 

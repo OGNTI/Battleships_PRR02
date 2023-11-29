@@ -2,7 +2,6 @@
 
 public class GameBoard
 {
-
     int _boardSize = 10;
     public int boardSize
     {
@@ -43,6 +42,8 @@ public class GameBoard
     List<Ship> ships = new List<Ship>();
 
     public char[] alphabet = Enumerable.Range('A', 'Z' - 'A' + 1).Select(i => (char)i).ToArray();
+
+    public List<string> gridCoordinates= new List<string>();
 
     public void GenerateGrid()
     {
@@ -288,7 +289,7 @@ public class GameBoard
         }
 
         if (!acceptedPositioning) Console.WriteLine("Blocked. \nTry again.");
-        
+
         return acceptedPositioning;
     }
 
@@ -326,20 +327,28 @@ public class GameBoard
 
                 string userInput = Console.ReadLine().ToLower().Trim();
 
-                int to = userInput.IndexOf(" ");
-                string possibleCoordinates = userInput.Substring(0, to);
-                string possibleDirection = userInput.Substring(to, userInput.Length - to).Trim();
+                bool acceptedCoordinates = false;
+                if (userInput.Contains(" "))
+                {
+                    int to = userInput.IndexOf(" ");
+                    string possibleCoordinates = userInput.Substring(0, to);
 
-                var result = GetTargetOrBoolFromUserInput(possibleCoordinates);
-                placementTarget = result.target; // Get coordinates
+                    var result = GetTargetFromUserInput(possibleCoordinates);
+                    placementTarget = result.target;
+                    acceptedCoordinates = result.accepted;
+                }
+                else
+                {
+                    Console.WriteLine("You did not space your coordinates and direction like instructed. \nTry again.");
+                }
 
-                if (possibleDirection == "left") {dir = 0; acceptedDirection = true;}
-                else if (possibleDirection == "up") {dir = 1; acceptedDirection = true;}
-                else if (possibleDirection == "right") {dir = 2; acceptedDirection = true;}
-                else if (possibleDirection == "down") {dir = 3; acceptedDirection = true;}
+                if (userInput.Contains("left")) { dir = 0; acceptedDirection = true; }
+                else if (userInput.Contains("up")) { dir = 1; acceptedDirection = true; }
+                else if (userInput.Contains("right")) { dir = 2; acceptedDirection = true; }
+                else if (userInput.Contains("down")) { dir = 3; acceptedDirection = true; }
                 else Console.WriteLine("You did not type an accepted direction. \nTry again.");
 
-                if (result.accepted && acceptedDirection)
+                if (acceptedCoordinates && acceptedDirection)
                 {
                     acceptedInput = true;
                 }
@@ -353,7 +362,7 @@ public class GameBoard
         }
     }
 
-    public (int[] target, bool accepted) GetTargetOrBoolFromUserInput(string userInput)
+    public (int[] target, bool accepted) GetTargetFromUserInput(string userInput)
     {
         int[] coordinates = new int[2];
         bool acceptedInput = false;
@@ -410,4 +419,6 @@ public class GameBoard
             shipGrid[s.position[i, 0], s.position[i, 1]] = 1;
         }
     }
+
+    void Set
 }
