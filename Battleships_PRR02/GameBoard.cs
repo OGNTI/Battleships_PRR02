@@ -24,13 +24,13 @@ public class GameBoard
         }
     }
 
-    char[,] grid;
-    int[,] shipGrid;
+    public char[,] grid;
+    public int[,] shipGrid;
 
     ConsoleColor standardColour = ConsoleColor.Gray;
     ConsoleColor coorindateColour = ConsoleColor.White;
 
-    char hit = 'x';
+    public char hit = 'x';
     ConsoleColor hitColour = ConsoleColor.DarkGray;
 
     char miss = '¤';
@@ -327,14 +327,17 @@ public class GameBoard
                 string userInput = Console.ReadLine().ToLower().Trim();
 
                 bool acceptedCoordinates = false;
-                if (userInput.Contains(" "))
+                if (userInput.Contains(" ") && userInput.IndexOf(" ") >= 2)
                 {
-                    int to = userInput.IndexOf(" ");
-                    string possibleCoordinates = userInput.Substring(0, to);
+                    string possibleCoordinates = userInput.Substring(0, userInput.IndexOf(" "));
 
                     var result = GetTargetFromUserInput(possibleCoordinates);
                     placementTarget = result.target;
                     acceptedCoordinates = result.accepted;
+                }
+                else if (userInput.IndexOf(" ") < 2)
+                {
+                    Console.WriteLine("Do not space your letter and number coordinate. \nTry again.");
                 }
                 else
                 {
