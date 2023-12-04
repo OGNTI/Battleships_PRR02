@@ -30,11 +30,11 @@ public class GameBoard
     ConsoleColor standardColour = ConsoleColor.Gray;
     ConsoleColor coorindateColour = ConsoleColor.White;
 
-    public char hit = 'x';
-    ConsoleColor hitColour = ConsoleColor.DarkGray;
+    public char hit = '¤';
+    ConsoleColor hitColour = ConsoleColor.Red;
 
-    char miss = '¤';
-    ConsoleColor missColour = ConsoleColor.Red;
+    char miss = 'x';
+    ConsoleColor missColour = ConsoleColor.DarkGray;
 
     char unknown = 'o';
     ConsoleColor unknownColour = ConsoleColor.Blue;
