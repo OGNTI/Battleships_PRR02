@@ -28,7 +28,7 @@ public class GameBoard
     public int[,] shipGrid;
 
     ConsoleColor standardColour = ConsoleColor.Gray;
-    ConsoleColor coorindateColour = ConsoleColor.White;
+    ConsoleColor NumLettColour = ConsoleColor.White;
 
     public char hit = '¤';
     ConsoleColor hitColour = ConsoleColor.Red;
@@ -94,7 +94,7 @@ public class GameBoard
 
     public void DrawBoard(bool isPlacing)
     {
-        Console.ForegroundColor = coorindateColour;
+        Console.ForegroundColor = NumLettColour;
         Console.Write("   ");
         for (int i = 0; i < grid.GetLength(1); i++)
         {
@@ -113,7 +113,7 @@ public class GameBoard
             {
                 Console.Write("\n");
             }
-            Console.ForegroundColor = coorindateColour;
+            Console.ForegroundColor = NumLettColour;
             Console.Write($"{nums} ");
 
             for (int x = 0; x < grid.GetLength(0); x++)
@@ -149,8 +149,13 @@ public class GameBoard
     {
         if (shipGrid[targetCoords[0], targetCoords[1]] == 1)
         {
-            Console.WriteLine("Hit");
-            grid[targetCoords[0], targetCoords[1]] = hit;
+            if (grid[targetCoords[0], targetCoords[1]] == hit)
+            {
+                Console.WriteLine("Hit");
+                grid[targetCoords[0], targetCoords[1]] = hit;
+
+            }
+            else Console.WriteLine("Already hit that position.");
         }
         else
         {
@@ -335,14 +340,8 @@ public class GameBoard
                     placementTarget = result.target;
                     acceptedCoordinates = result.accepted;
                 }
-                else if (userInput.IndexOf(" ") < 2)
-                {
-                    Console.WriteLine("Do not space your letter and number coordinate. \nTry again.");
-                }
-                else
-                {
-                    Console.WriteLine("You did not space your coordinates and direction like instructed. \nTry again.");
-                }
+                else if (userInput.IndexOf(" ") < 2) Console.WriteLine("Do not space your letter and number coordinate. \nTry again.");
+                else Console.WriteLine("You did not space your coordinates and direction like instructed. \nTry again.");
 
                 if (userInput.Contains("left")) { dir = 0; acceptedDirection = true; }
                 else if (userInput.Contains("up")) { dir = 1; acceptedDirection = true; }
@@ -420,5 +419,19 @@ public class GameBoard
         {
             shipGrid[s.position[i, 0], s.position[i, 1]] = 1;
         }
+    }
+
+    int? FindShip(int[] coordinate)
+    {
+        int? index = null;
+        foreach (Ship s in ships)
+        {
+            for (int i = 0; i < s.size; i++)
+            {
+                //find ship
+            }
+        }
+
+        return index;
     }
 }
