@@ -149,11 +149,15 @@ public class GameBoard
     {
         if (shipGrid[targetCoords[0], targetCoords[1]] == 1)
         {
-            if (grid[targetCoords[0], targetCoords[1]] == hit)
+            if (grid[targetCoords[0], targetCoords[1]] != hit)
             {
                 Console.WriteLine("Hit");
                 grid[targetCoords[0], targetCoords[1]] = hit;
 
+                var GottenShip = GetShip(targetCoords); //makeshift way of founding out what ship was hit
+                ships[GottenShip.index].hits[GottenShip.section] = true;
+
+                if (ships[GottenShip.index].IsShipSunk() == true) Console.WriteLine($"You sunk a {ships[GottenShip.index].name}.");
             }
             else Console.WriteLine("Already hit that position.");
         }
@@ -421,17 +425,37 @@ public class GameBoard
         }
     }
 
-    int? FindShip(int[] coordinate)
+    (int index, int section) GetShip(int[] coordinate)
     {
-        int? index = null;
+        int index = 0;
+        int section = 0;
         foreach (Ship s in ships)
         {
             for (int i = 0; i < s.size; i++)
             {
-                //find ship
+                if (s.position[i, 0] == coordinate[0] && s.position[i, 1] == coordinate[1])
+                {
+                    index = ships.IndexOf(s);
+                    section = i;
+                }
             }
         }
 
-        return index;
+        var result = (index, section);
+        return result;
+    }
+
+    public bool IsGameEnd()
+    {
+        bool haveWon = true;
+        foreach (Ship s in ships)
+        {
+            if (s.IsShipSunk() == false)
+            {
+                haveWon = false;
+            }
+        }
+
+        return haveWon;
     }
 }

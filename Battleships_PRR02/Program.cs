@@ -39,6 +39,8 @@ if (answer == "2" || answer == "two")
         Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship.");
         player1.board.DrawBoard(false);
         player1.board.FireAndCheckHit(player2.GetTarget());
+
+        //make game end
     }
 }
 else
@@ -54,6 +56,12 @@ else
     {
         SinglePlayer.board.DrawBoard(false);
         SinglePlayer.board.FireAndCheckHit(SinglePlayer.GetTarget());
+
+        if (SinglePlayer.board.IsGameEnd() == true)
+        {
+            Console.WriteLine("Congrats, you won.");
+            gaming = false;
+        }
     }
 }
 
