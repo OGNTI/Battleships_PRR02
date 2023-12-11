@@ -32,34 +32,51 @@ if (answer == "2" || answer == "two")
     bool gaming = true;
     while (gaming)
     {
-        Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship.");
+        Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship. \nYou have {player1.shots} shots left.");
         player2.board.DrawBoard(false);
-        player2.board.FireAndCheckHit(player1.GetTarget());
+        player2.board.FireAndCheckHit(player1.GetTarget(), player1);
 
-        Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship.");
+        Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship. \nYou have {player2.shots} shots left.");
         player1.board.DrawBoard(false);
-        player1.board.FireAndCheckHit(player2.GetTarget());
+        player1.board.FireAndCheckHit(player2.GetTarget(), player2);
 
-        //make game end
+        if (player1.board.IsGameEnd())
+        {
+            Console.WriteLine($"Congrats {player1.name}, you won.");
+            gaming = false;
+        }
+        else if (player2.board.IsGameEnd())
+        {
+            Console.WriteLine($"Congrats {player1.name}, you won.");
+            gaming = false;
+        }
+
+        //game end not done yet, continue making it
     }
 }
 else
 {
-    Player SinglePlayer = new();
+    Player singlePlayer = new();
 
-    SinglePlayer.SetPlayer();
-    SinglePlayer.SetBoard();
+    singlePlayer.SetPlayer();
+    singlePlayer.SetBoard();
 
     Console.Clear();
     bool gaming = true;
     while (gaming)
     {
-        SinglePlayer.board.DrawBoard(false);
-        SinglePlayer.board.FireAndCheckHit(SinglePlayer.GetTarget());
+        Console.WriteLine($"{singlePlayer.name}, type the coordinate where you a ship is placed. \nYou have {singlePlayer.shots} shots left.");
+        singlePlayer.board.DrawBoard(false);
+        singlePlayer.board.FireAndCheckHit(singlePlayer.GetTarget(), singlePlayer);
 
-        if (SinglePlayer.board.IsGameEnd() == true)
+        if (singlePlayer.board.IsGameEnd())
         {
             Console.WriteLine("Congrats, you won.");
+            gaming = false;
+        }
+        else if (singlePlayer.IsOutOfShots())
+        {
+            Console.WriteLine("Congrats, you lost.");
             gaming = false;
         }
     }

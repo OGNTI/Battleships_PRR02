@@ -3,6 +3,23 @@
     public string name;
     public int? designation = null;
     public GameBoard board = new();
+    public int _shots = 30;
+    public int shots 
+    {
+        get
+        {
+            return _shots;
+        }
+        set
+        {
+            _shots = value;
+
+            if (_shots < 0)
+            {
+                _shots = 0;
+            }
+        }
+    }
 
 
     public void SetPlayer()
@@ -22,6 +39,7 @@
         if (trulyNumber)
         {
             board.boardSize = a;
+            shots = board.boardSize * 3;
         }
 
         board.GenerateGrid();
@@ -42,5 +60,16 @@
         }
 
         return target;
+    }
+
+    public bool IsOutOfShots()
+    {
+        bool isOut = false;
+        if (shots == 0)
+        {
+            isOut = true;
+        }
+
+        return isOut;
     }
 }

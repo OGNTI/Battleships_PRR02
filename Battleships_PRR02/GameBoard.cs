@@ -145,8 +145,10 @@ public class GameBoard
         Console.WriteLine();
     }
 
-    public void FireAndCheckHit(int[] targetCoords)
+    public void FireAndCheckHit(int[] targetCoords, Player player)
     {
+        player.shots--;
+
         if (shipGrid[targetCoords[0], targetCoords[1]] == 1)
         {
             if (grid[targetCoords[0], targetCoords[1]] != hit)
