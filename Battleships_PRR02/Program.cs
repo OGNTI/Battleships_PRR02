@@ -32,26 +32,37 @@ if (answer == "2" || answer == "two")
     bool gaming = true;
     while (gaming)
     {
-        Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship. \nYou have {player1.shots} shots left.");
-        player2.board.DrawBoard(false);
-        player2.board.FireAndCheckHit(player1.GetTarget(), player1);
+        if (player1.shots > 0)
+        {
+            Console.WriteLine($"{player1.name}, type the coordinate where you think your opponent has placed a ship. \nYou have {player1.shots} shots left.");
+            player2.board.DrawBoard(false);
+            player2.board.FireAndCheckHit(player1.GetTarget(), player1);
+        }
+        else Console.WriteLine($"{player1.name}, you have no more shots");
 
-        Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship. \nYou have {player2.shots} shots left.");
-        player1.board.DrawBoard(false);
-        player1.board.FireAndCheckHit(player2.GetTarget(), player2);
+        if (player2.shots > 0)
+        {
+            Console.WriteLine($"{player2.name}, type the coordinate where you think your opponent has placed a ship. \nYou have {player2.shots} shots left.");
+            player1.board.DrawBoard(false);
+            player1.board.FireAndCheckHit(player2.GetTarget(), player2);
+        }
+        else Console.WriteLine($"{player2.name}, you have no more shots");
 
-        if (player1.board.IsGameEnd())
+        if (player2.board.IsGameEnd())
         {
             Console.WriteLine($"Congrats {player1.name}, you won.");
             gaming = false;
         }
-        else if (player2.board.IsGameEnd())
+        else if (player1.board.IsGameEnd())
         {
-            Console.WriteLine($"Congrats {player1.name}, you won.");
+            Console.WriteLine($"Congrats {player2.name}, you won.");
             gaming = false;
         }
-
-        //game end not done yet, continue making it
+        else if (player1.shots == 0 && player2.shots == 0)
+        {
+            Console.WriteLine($"Congrats, you both lost.");
+            gaming = false;
+        }
     }
 }
 else
@@ -82,4 +93,5 @@ else
     }
 }
 
-
+Console.WriteLine("End");
+Console.ReadLine();

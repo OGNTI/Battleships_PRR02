@@ -449,15 +449,15 @@ public class GameBoard
 
     public bool IsGameEnd()
     {
-        bool haveWon = true;
+        bool gameEnd = true;
         foreach (Ship s in ships)
         {
             if (s.IsShipSunk() == false)
             {
-                haveWon = false;
+                gameEnd = false;
             }
         }
 
-        return haveWon;
+        return gameEnd;
     }
 }
